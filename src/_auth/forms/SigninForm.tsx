@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { Link, useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
+
+
 import {
   Form,
   FormControl,
@@ -13,6 +12,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { SigninValidation } from "@/lib/validation";
@@ -21,11 +22,12 @@ import { useSignInAccount } from "@/lib/tanstack-query/queryAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 
 const SigninForm = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { checkAuthUser, isLoading: isuserLoading } = useUserContext();
-  const navigate = useNavigate();
 
-  const { mutateAsync: signInAccount } = useSignInAccount();
+  // query signin
+  const { mutateAsync: signInAccount, isPending } = useSignInAccount();
 
   //  Defining form.
   const form = useForm<z.infer<typeof SigninValidation>>({
@@ -37,14 +39,13 @@ const SigninForm = () => {
   });
 
   //  Defining a submit handler.
-  async function onSubmit(values: z.infer<typeof SigninValidation>) {
-    const session = await signInAccount({
-      email: values.email,
-      password: values.password,
-    });
+  const handleSubmitSignin = async (
+    values: z.infer<typeof SigninValidation>
+  ) => {
+    const session = await signInAccount(values);
 
     if (!session) {
-      return toast({ title: "Sign in failed, please try again" });
+      return toast({ title: "Login failed, please try again" });
     }
 
     const isLoggedIn = await checkAuthUser();
@@ -53,9 +54,10 @@ const SigninForm = () => {
       form.reset();
       navigate("/");
     } else {
-      return toast({ title: "Sign up failed, please try again" });
+      toast({ title: "Login failed, please try again" });
+      return;
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -72,7 +74,7 @@ const SigninForm = () => {
         </p>
 
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleSubmitSignin)}
           className="flex flex-col gap-5 w-full mt-4 "
         >
           <FormField
@@ -112,12 +114,12 @@ const SigninForm = () => {
             )}
           />
           <Button type="submit" className="shad-button_primary mt-5">
-            {isuserLoading ? (
+            {isuserLoading || isPending ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading..
               </div>
             ) : (
-              "Sign in"
+              "Login "
             )}
           </Button>
           <p className="text-small-regular text-light-2 text-center mt-2">
