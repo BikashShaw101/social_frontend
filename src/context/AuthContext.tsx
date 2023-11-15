@@ -7,7 +7,7 @@ import { INITIAL_USER } from "./state";
 const INITIAL_STATE = {
   user: INITIAL_USER,
   isLoading: false,
-  isAuthenticate: false,
+  isAuthenticated: false,
   setUser: () => {},
   setIsAuthenticated: () => {},
   checkAuthUser: async () => false as boolean,

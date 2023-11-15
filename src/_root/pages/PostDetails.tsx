@@ -3,7 +3,6 @@ import Loader from "@/components/shared/Loader";
 import PostStats from "@/components/shared/PostStats";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
-import { deletePost } from "@/lib/appwrite/api";
 import {
   useDeletePost,
   useGetPostById,
@@ -29,14 +28,14 @@ const PostDetails = () => {
   const { mutate: deletePost } = useDeletePost();
 
   const handleDeletePost = () => {
-    deletePost({ postId: id, imageId: post?.imageId });
+    deletePost({ postId: id || "", imageId: post?.imageId });
     navigate(-1);
   };
   return (
     <div className="post_details-container">
       {isPending ? (
         <Loader />
-      ) : (
+      ) : post ? (
         <div className="post_details-card">
           <img src={post?.imageUrl} alt="post" className="post_details-img" />
           <div className="post_details-info">
@@ -115,6 +114,10 @@ const PostDetails = () => {
             </div>
           </div>
         </div>
+      ) : (
+        <>
+          <div className="h2-bold text-center">Wait a Moment</div>
+        </>
       )}
 
       <div className="w-full max-w-5xl">
