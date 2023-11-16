@@ -430,6 +430,7 @@ export async function getUserById(userId: string) {
     return user;
   } catch (error) {
     console.log(error);
+    throw Error;
   }
 }
 

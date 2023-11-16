@@ -26,7 +26,7 @@ import {
   updatePost,
   updateUser,
 } from "@/lib/appwrite/api";
-import { INewPost, INewUser, IUpdatePost } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 
 // AUTH QUERIES
 // ============================================================
@@ -183,7 +183,10 @@ export const useGetPosts = () => {
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
     queryFn: getInfinitePosts,
     getNextPageParam: (lastPage) => {
-      if (lastPage && lastPage.documents.length === 0) return null;
+      if (lastPage && lastPage.documents.length === 0) {
+        return null;
+      }
+
       const lastId = lastPage?.documents[lastPage?.documents.length - 1].$id;
 
       return lastId;
@@ -225,7 +228,7 @@ export const useGetUserById = (userId: string) => {
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (user: IUpdatePost) => updateUser(user),
+    mutationFn: (user: IUpdateUser) => updateUser(user),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_CURRENT_USER],
