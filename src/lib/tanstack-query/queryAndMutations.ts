@@ -179,7 +179,7 @@ export const useDeletePost = () => {
 };
 
 export const useGetPosts = () => {
-  return useInfiniteQuery({
+  return useInfiniteQuery<LastPage<Post>, Error>({
     queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
     queryFn: getInfinitePosts,
     getNextPageParam: (lastPage) => {
